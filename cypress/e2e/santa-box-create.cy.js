@@ -27,7 +27,7 @@ describe("user can create a box and run it", () => {
   let inviteLink;
   let boxId;
 
-  it.only("user logins and create a box", () => {
+  it("user logins and create a box", () => {
     cy.visit("/login");
     cy.login(users.userAutor.email, users.userAutor.password);
     cy.contains("Создать коробку").click();
@@ -74,20 +74,42 @@ describe("user can create a box and run it", () => {
     cy.contains("войдите").click();
     cy.login(users.user1.email, users.user1.password);
     cy.contains("Создать карточку участника").should("exist");
+    cy.createCard(wishes);
+
+    cy.clearCookies();
+  });
+
+  it("approve as user2", () => {
+    cy.visit(inviteLink);
     cy.get(generalElements.submitButton).click();
-    cy.get(generalElements.arrowRight).click();
-    cy.get(generalElements.arrowRight).click();
-    cy.get(inviteeBoxPage.wishesInput).type(wishes);
-    cy.get(generalElements.arrowRight).click();
-    cy.get(inviteeDashboardPage.noticeForInvitee)
-      .invoke("text")
-      .then((text) => {
-        expect(text).to.contain("Это — анонимный чат с вашим Тайным Сантой");
-      });
+    cy.contains("войдите").click();
+    cy.login(users.user2.email, users.user2.password);
+    cy.contains("Создать карточку участника").should("exist");
+    cy.createCard(wishes);
+    cy.clearCookies();
+  });
+
+  it("approve as user3", () => {
+    cy.visit(inviteLink);
+    cy.get(generalElements.submitButton).click();
+    cy.contains("войдите").click();
+    cy.login(users.user3.email, users.user3.password);
+    cy.contains("Создать карточку участника").should("exist");
+    cy.createCard(wishes);
+
     cy.clearCookies();
   });
 
   after("delete box", () => {
+    let userCookie;
+    cy.request({
+      method: "POST",
+      url: "/api/login",
+      body: { email: "olga.bogush87@gmail.com", password: "olga_su" },
+    }).then((response) => {
+      userCookie = response.headers["set-cookie"].join("; ");
+      cy.wrap(userCookie).as("userCookie");
+    });
     cy.request({
       method: "DELETE",
       url: `/api/box/${boxId}`,
