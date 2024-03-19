@@ -50,7 +50,7 @@ describe("user can create a box and run it", () => {
     cy.contains("Дополнительные настройки").should("exist");
     cy.get(generalElements.arrowRight).click();
     cy.get(dashboardPage.createdBoxName).should("have.text", newBoxName);
-    cy.get(".layout-1__header-wrapper-fixed .toggle-menu-item span")
+    cy.get(dashboardPage.togglePanel)
       .invoke("text")
       .then((text) => {
         expect(text).to.include("Участники");
@@ -100,12 +100,27 @@ describe("user can create a box and run it", () => {
     cy.clearCookies();
   });
 
+  it("draw lots", () => {
+    cy.visit("/login");
+    cy.login(users.userAutor.email, users.userAutor.password);
+    cy.contains("Коробки").click({ force: true });
+    cy.contains(newBoxName).click();
+
+    cy.contains("Перейти к жеребьевке").click({ force: true });
+    cy.get(generalElements.submitButton).click();
+    cy.contains("Да, провести жеребьевку").click({ force: true });
+    cy.contains("Жеребьевка проведена").should("exist");
+  });
+
   after("delete box", () => {
     let userCookie;
     cy.request({
       method: "POST",
       url: "/api/login",
-      body: { email: "olga.bogush87@gmail.com", password: "olga_su" },
+      body: {
+        email: `${users.userAutor.email}`,
+        password: `${users.userAutor.password}`,
+      },
     }).then((response) => {
       userCookie = response.headers["set-cookie"].join("; ");
       cy.wrap(userCookie).as("userCookie");
