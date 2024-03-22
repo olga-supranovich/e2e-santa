@@ -47,3 +47,14 @@ Cypress.Commands.add("createCard", (text) => {
       expect(text).to.contain("Это — анонимный чат с вашим Тайным Сантой");
     });
 });
+
+Cypress.Commands.add("addParticipantsManually", (array) => {
+  for (let i = 0; i < array.length; i++) {
+    cy.get(`:nth-child(${2 * i + 1}) > .frm-wrapper > #input-table-${i}`).type(
+      array[i].name
+    );
+    cy.get(`:nth-child(${2 * i + 2}) > .frm-wrapper > #input-table-${i}`).type(
+      array[i].email
+    );
+  }
+});
