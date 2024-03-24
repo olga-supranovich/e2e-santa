@@ -72,71 +72,85 @@ describe("user can create a box, add participants manually and run it", () => {
 
     cy.clearCookies();
   });
-  // it("approve as user1", () => {
-  //   cy.visit(inviteLink);
-  //   cy.get(generalElements.submitButton).click();
-  //   cy.contains("войдите").click();
-  //   cy.login(users.user1.email, users.user1.password);
-  //   cy.contains("Создать карточку участника").should("exist");
-  //   cy.createCard(wishes);
 
-  //   cy.clearCookies();
-  // });
+  it("approve as user1", () => {
+    cy.visit("/login");
+    cy.login(users.user1.email, users.user1.password);
+    cy.contains("Коробки").click({ force: true });
+    cy.contains(newBoxName).click();
+    cy.get(dashboardPage.userCardList).should("exist");
+    cy.contains(dashboardPage.userCardList, `${users.user1.name}`).click({
+      force: true,
+    });
+    cy.contains("Заполнить карточку участника").should("exist");
+    cy.createCard(wishes);
 
-  // it("approve as user2", () => {
-  //   cy.visit(inviteLink);
-  //   cy.get(generalElements.submitButton).click();
-  //   cy.contains("войдите").click();
-  //   cy.login(users.user2.email, users.user2.password);
-  //   cy.contains("Создать карточку участника").should("exist");
-  //   cy.createCard(wishes);
-  //   cy.clearCookies();
-  // });
+    cy.clearCookies();
+  });
 
-  // it("approve as user3", () => {
-  //   cy.visit(inviteLink);
-  //   cy.get(generalElements.submitButton).click();
-  //   cy.contains("войдите").click();
-  //   cy.login(users.user3.email, users.user3.password);
-  //   cy.contains("Создать карточку участника").should("exist");
-  //   cy.createCard(wishes);
+  it("approve as user2", () => {
+    cy.visit("/login");
+    cy.login(users.user2.email, users.user2.password);
+    cy.contains("Коробки").click({ force: true });
+    cy.contains(newBoxName).click();
+    cy.get(dashboardPage.userCardList).should("exist");
+    cy.contains(dashboardPage.userCardList, `${users.user2.name}`).click({
+      force: true,
+    });
+    cy.contains("Заполнить карточку участника").should("exist");
+    cy.createCard(wishes);
 
-  //   cy.clearCookies();
-  // });
+    cy.clearCookies();
+  });
 
-  // it("draw lots", () => {
-  //   cy.visit("/login");
-  //   cy.login(users.userAutor.email, users.userAutor.password);
-  //   cy.contains("Коробки").click({ force: true });
-  //   cy.contains(newBoxName).click();
+  it("approve as user3", () => {
+    cy.visit("/login");
+    cy.login(users.user3.email, users.user3.password);
+    cy.contains("Коробки").click({ force: true });
+    cy.contains(newBoxName).click();
+    cy.get(dashboardPage.userCardList).should("exist");
+    cy.contains(dashboardPage.userCardList, `${users.user3.name}`).click({
+      force: true,
+    });
+    cy.contains("Заполнить карточку участника").should("exist");
+    cy.createCard(wishes);
 
-  //   cy.contains("Перейти к жеребьевке").click({ force: true });
-  //   cy.get(generalElements.submitButton).click();
-  //   cy.contains("Да, провести жеребьевку").click({ force: true });
-  //   cy.contains("Жеребьевка проведена").should("exist");
-  // });
+    cy.clearCookies();
+  });
 
-  // after("delete box", () => {
-  //   let userCookie;
-  //   cy.request({
-  //     method: "POST",
-  //     url: "/api/login",
-  //     body: {
-  //       email: `${users.userAutor.email}`,
-  //       password: `${users.userAutor.password}`,
-  //     },
-  //   }).then((response) => {
-  //     userCookie = response.headers["set-cookie"].join("; ");
-  //     cy.wrap(userCookie).as("userCookie");
-  //   });
-  //   cy.request({
-  //     method: "DELETE",
-  //     url: `/api/box/${boxId}`,
-  //     headers: {
-  //       Cookie: `${userCookie}`,
-  //     },
-  //   }).then((response) => {
-  //     expect(response.status).to.equal(200);
-  //   });
-  // });
+  it("draw lots", () => {
+    cy.visit("/login");
+    cy.login(users.userAutor.email, users.userAutor.password);
+    cy.contains("Коробки").click({ force: true });
+    cy.contains(newBoxName).click();
+
+    cy.contains("Перейти к жеребьевке").click({ force: true });
+    cy.get(generalElements.submitButton).click();
+    cy.contains("Да, провести жеребьевку").click({ force: true });
+    cy.contains("Жеребьевка проведена").should("exist");
+  });
+
+  after("delete box", () => {
+    let userCookie;
+    cy.request({
+      method: "POST",
+      url: "/api/login",
+      body: {
+        email: `${users.userAutor.email}`,
+        password: `${users.userAutor.password}`,
+      },
+    }).then((response) => {
+      userCookie = response.headers["set-cookie"].join("; ");
+      cy.wrap(userCookie).as("userCookie");
+    });
+    cy.request({
+      method: "DELETE",
+      url: `/api/box/${boxId}`,
+      headers: {
+        Cookie: `${userCookie}`,
+      },
+    }).then((response) => {
+      expect(response.status).to.equal(200);
+    });
+  });
 });
