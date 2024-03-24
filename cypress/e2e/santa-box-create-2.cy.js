@@ -1,10 +1,7 @@
 const users = require("../fixtures/users.json");
-const boxPage = require("../fixtures/pages/boxPage.json");
 const generalElements = require("../fixtures/pages/general.json");
 const dashboardPage = require("../fixtures/pages/dashboardPage.json");
 const invitePage = require("../fixtures/pages/invitePage.json");
-const inviteeBoxPage = require("../fixtures/pages/inviteeBoxPage.json");
-const inviteeDashboardPage = require("../fixtures/pages/inviteeDashboardPage.json");
 import { faker } from "@faker-js/faker";
 
 describe("user can create a box, add participants manually and run it", () => {
@@ -19,36 +16,19 @@ describe("user can create a box, add participants manually and run it", () => {
   //пользователь 4 заполняет анкету
   //пользователь 1 логинится
   //пользователь 1 запускает жеребьевку
-  let userCookie = Cypress.config("userCookie");
   let newBoxName = faker.word.noun({ length: { min: 5, max: 10 } });
   let wishes = faker.word.noun() + faker.word.adverb() + faker.word.adjective();
   let maxAmount = 50;
   let currency = "Евро";
-  let inviteLink;
-  let boxId;
+  let context = {};
 
   it("user logins and create a box", () => {
     cy.visit("/login");
     cy.login(users.userAutor.email, users.userAutor.password);
     cy.contains("Создать коробку").click();
-    cy.get(boxPage.boxNameField).type(newBoxName);
-    cy.get(boxPage.boxIdField)
-      .invoke("val")
-      .as("value")
-      .then((value) => {
-        boxId = value;
-      });
-    cy.get(generalElements.arrowRight).click();
-    cy.contains("Выберите обложку").should("exist");
-    cy.get(boxPage.sixthIcon).click();
-    cy.get(generalElements.arrowRight).click();
-    cy.contains("Стоимость подарков").should("exist");
-    cy.get(boxPage.giftPriceToggle).check({ force: true });
-    cy.get(boxPage.maxAnount).type(maxAmount);
-    cy.get(boxPage.currency).select(currency);
-    cy.get(generalElements.arrowRight).click();
-    cy.contains("Дополнительные настройки").should("exist");
-    cy.get(generalElements.arrowRight).click();
+
+    cy.createBox(newBoxName, maxAmount, currency, context);
+
     cy.get(dashboardPage.createdBoxName).should("have.text", newBoxName);
     cy.get(dashboardPage.togglePanel)
       .invoke("text")
@@ -61,9 +41,6 @@ describe("user can create a box, add participants manually and run it", () => {
 
   it("add participants manually", () => {
     cy.get(generalElements.submitButton).click();
-
-    let usersArray = Object.values(users).slice(1);
-
     cy.addParticipantsManually(usersArray);
     cy.get(invitePage.inviteButton).click();
     cy.contains(
@@ -73,49 +50,22 @@ describe("user can create a box, add participants manually and run it", () => {
     cy.clearCookies();
   });
 
-  it("approve as user1", () => {
-    cy.visit("/login");
-    cy.login(users.user1.email, users.user1.password);
-    cy.contains("Коробки").click({ force: true });
-    cy.contains(newBoxName).click();
-    cy.get(dashboardPage.userCardList).should("exist");
-    cy.contains(dashboardPage.userCardList, `${users.user1.name}`).click({
-      force: true,
+  let usersArray = Object.values(users).slice(1);
+  usersArray.forEach((user, index) => {
+    it(`approve as user${index + 1}`, () => {
+      cy.visit("/login");
+      cy.login(user.email, user.password);
+      cy.contains("Коробки").click({ force: true });
+      cy.contains(newBoxName).click();
+      cy.get(dashboardPage.userCardList).should("exist");
+      cy.contains(dashboardPage.userCardList, `${user.name}`).click({
+        force: true,
+      });
+      cy.contains("Заполнить карточку участника").should("exist");
+      cy.createCard(wishes);
+
+      cy.clearCookies();
     });
-    cy.contains("Заполнить карточку участника").should("exist");
-    cy.createCard(wishes);
-
-    cy.clearCookies();
-  });
-
-  it("approve as user2", () => {
-    cy.visit("/login");
-    cy.login(users.user2.email, users.user2.password);
-    cy.contains("Коробки").click({ force: true });
-    cy.contains(newBoxName).click();
-    cy.get(dashboardPage.userCardList).should("exist");
-    cy.contains(dashboardPage.userCardList, `${users.user2.name}`).click({
-      force: true,
-    });
-    cy.contains("Заполнить карточку участника").should("exist");
-    cy.createCard(wishes);
-
-    cy.clearCookies();
-  });
-
-  it("approve as user3", () => {
-    cy.visit("/login");
-    cy.login(users.user3.email, users.user3.password);
-    cy.contains("Коробки").click({ force: true });
-    cy.contains(newBoxName).click();
-    cy.get(dashboardPage.userCardList).should("exist");
-    cy.contains(dashboardPage.userCardList, `${users.user3.name}`).click({
-      force: true,
-    });
-    cy.contains("Заполнить карточку участника").should("exist");
-    cy.createCard(wishes);
-
-    cy.clearCookies();
   });
 
   it("draw lots", () => {
@@ -133,6 +83,7 @@ describe("user can create a box, add participants manually and run it", () => {
 
   after("delete box", () => {
     let userCookie;
+
     cy.request({
       method: "POST",
       url: "/api/login",
@@ -144,17 +95,19 @@ describe("user can create a box, add participants manually and run it", () => {
       userCookie = response.headers["set-cookie"].join("; ");
       cy.wrap(userCookie).as("userCookie");
     });
+
     cy.request({
       method: "DELETE",
-      url: `/api/box/${boxId}`,
+      url: `/api/box/${context.boxId}`,
       headers: {
         Cookie: `${userCookie}`,
       },
     }).then((response) => {
       expect(response.status).to.equal(200);
     });
+
     cy.request({
-      url: `/api/box/${boxId}`,
+      url: `/api/box/${context.boxId}`,
       headers: {
         Cookie: `${userCookie}`,
       },

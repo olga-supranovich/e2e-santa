@@ -25,6 +25,8 @@
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
 const loginPage = require("../fixtures/pages/loginPage.json");
+const boxPage = require("../fixtures/pages/boxPage.json");
+
 const generalElements = require("../fixtures/pages/general.json");
 const inviteeBoxPage = require("../fixtures/pages/inviteeBoxPage.json");
 const inviteeDashboardPage = require("../fixtures/pages/inviteeDashboardPage.json");
@@ -58,3 +60,24 @@ Cypress.Commands.add("addParticipantsManually", (array) => {
     );
   }
 });
+
+Cypress.Commands.add(
+  "createBox",
+  (newBoxName, maxAmount, currency, context) => {
+    cy.get(boxPage.boxNameField).type(newBoxName);
+    cy.get(boxPage.boxIdField)
+      .invoke("val")
+      .then((boxId) => (context.boxId = boxId));
+    cy.get(generalElements.arrowRight).click();
+    cy.contains("Выберите обложку").should("exist");
+    cy.get(boxPage.sixthIcon).click();
+    cy.get(generalElements.arrowRight).click();
+    cy.contains("Стоимость подарков").should("exist");
+    cy.get(boxPage.giftPriceToggle).check({ force: true });
+    cy.get(boxPage.maxAnount).type(maxAmount);
+    cy.get(boxPage.currency).select(currency);
+    cy.get(generalElements.arrowRight).click();
+    cy.contains("Дополнительные настройки").should("exist");
+    cy.get(generalElements.arrowRight).click();
+  }
+);
