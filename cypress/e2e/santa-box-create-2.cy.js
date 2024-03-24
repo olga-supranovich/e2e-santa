@@ -128,6 +128,7 @@ describe("user can create a box, add participants manually and run it", () => {
     cy.get(generalElements.submitButton).click();
     cy.contains("Да, провести жеребьевку").click({ force: true });
     cy.contains("Жеребьевка проведена").should("exist");
+    cy.clearCookies();
   });
 
   after("delete box", () => {
@@ -152,5 +153,20 @@ describe("user can create a box, add participants manually and run it", () => {
     }).then((response) => {
       expect(response.status).to.equal(200);
     });
+    cy.request({
+      url: `/api/box/${boxId}`,
+      headers: {
+        Cookie: `${userCookie}`,
+      },
+      failOnStatusCode: false,
+    }).then((response) => {
+      expect(response.status).to.equal(404);
+      expect(response.body.error.message).to.eq("BOX_NOT_FOUND");
+    });
+
+    cy.visit("/login");
+    cy.login(users.userAutor.email, users.userAutor.password);
+    cy.contains("Коробки").click({ force: true });
+    cy.contains(newBoxName).should("not.exist");
   });
 });
