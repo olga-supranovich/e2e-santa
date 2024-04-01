@@ -81,3 +81,53 @@ Cypress.Commands.add(
     cy.get(generalElements.arrowRight).click();
   }
 );
+
+// Cypress.Commands.add("createBox", (newBoxName, maxAmount, currency) => {
+//   cy.get(boxPage.boxNameField).type(newBoxName);
+//   cy.get(boxPage.boxIdField).invoke("val").as("value");
+//   // .then(function (value) {
+//   //   boxId = value;
+//   // });
+//   // cy.log("Box ID:", boxId);
+//   cy.get(generalElements.arrowRight).click();
+//   cy.contains("Выберите обложку").should("exist");
+//   cy.get(boxPage.sixthIcon).click();
+//   cy.get(generalElements.arrowRight).click();
+//   cy.contains("Стоимость подарков").should("exist");
+//   cy.get(boxPage.giftPriceToggle).check({ force: true });
+//   cy.get(boxPage.maxAnount).type(maxAmount);
+//   cy.get(boxPage.currency).select(currency);
+//   cy.get(generalElements.arrowRight).click();
+//   cy.contains("Дополнительные настройки").should("exist");
+//   cy.get(generalElements.arrowRight).click();
+//   cy.get("@value").then((value) => {
+//     cy.log(`boxId0: ${value}`);
+//   });
+//   // return cy.get("@value");
+//   // return cy.wrap(boxId);
+// });
+
+// Cypress.Commands.add("createBox", (newBoxName, maxAmount, currency) => {
+//   cy.get(boxPage.boxNameField).type(newBoxName);
+
+//   return cy
+//     .get(boxPage.boxIdField)
+//     .invoke("val")
+//     .then((boxIdValue) => {
+//       // Store the value of boxIdValue in a variable if you need to use it later
+//       const boxId = boxIdValue;
+//       // Perform further actions with the obtained value
+//       cy.get(generalElements.arrowRight).click();
+//       cy.contains("Выберите обложку").should("exist");
+//       cy.get(boxPage.sixthIcon).click();
+//       cy.get(generalElements.arrowRight).click();
+//       cy.contains("Стоимость подарков").should("exist");
+//       cy.get(boxPage.giftPriceToggle).check({ force: true });
+//       cy.get(boxPage.maxAnount).type(maxAmount);
+//       cy.get(boxPage.currency).select(currency);
+//       cy.get(generalElements.arrowRight).click();
+//       cy.contains("Дополнительные настройки").should("exist");
+//       cy.get(generalElements.arrowRight).click();
+//       cy.log(`boxId0: ${boxId}`); // Log or use the boxId value
+//     });
+// });
