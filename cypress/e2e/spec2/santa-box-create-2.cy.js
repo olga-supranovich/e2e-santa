@@ -1,10 +1,10 @@
-const users = require("../fixtures/users.json");
-const boxPage = require("../fixtures/pages/boxPage.json");
-const generalElements = require("../fixtures/pages/general.json");
-const dashboardPage = require("../fixtures/pages/dashboardPage.json");
-const invitePage = require("../fixtures/pages/invitePage.json");
-const inviteeBoxPage = require("../fixtures/pages/inviteeBoxPage.json");
-const inviteeDashboardPage = require("../fixtures/pages/inviteeDashboardPage.json");
+const users = require("../../fixtures/users.json");
+const boxPage = require("../../fixtures/pages/boxPage.json");
+const generalElements = require("../../fixtures/pages/general.json");
+const dashboardPage = require("../../fixtures/pages/dashboardPage.json");
+const invitePage = require("../../fixtures/pages/invitePage.json");
+const inviteeBoxPage = require("../../fixtures/pages/inviteeBoxPage.json");
+const inviteeDashboardPage = require("../../fixtures/pages/inviteeDashboardPage.json");
 import { faker } from "@faker-js/faker";
 
 describe("user can create a box, add participants manually and run it", () => {
@@ -27,7 +27,7 @@ describe("user can create a box, add participants manually and run it", () => {
   let inviteLink;
   let boxId;
 
-  it("user logins and create a box", () => {
+  it("2 - user logins and create a box", () => {
     cy.visit("/login");
     cy.login(users.userAutor.email, users.userAutor.password);
     cy.contains("Создать коробку").click();
