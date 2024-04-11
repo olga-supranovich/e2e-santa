@@ -5,8 +5,8 @@
   "main": "cypress.config.js",
   "scripts": {
     "cy:run": "cypress run",
-    "cy:spec1": "npm run cy:run -- --spec 'cypress/e2e/spec1/santa-box-create.cy.js' --browser chrome --record --key f3e65b6c-cc36-4439-a011-b998c5093094 --group Chrome --ci-build-id 12 --parallel",
-    "cy:spec2": "npm run cy:run -- --spec 'cypress/e2e/spec2/santa-box-create-2.cy.js' --browser electron --record --key f3e65b6c-cc36-4439-a011-b998c5093094 --group Electron --ci-build-id 12 --parallel",
+    "cy:spec1": "npm run cy:run -- --spec 'cypress/e2e/spec1/santa-box-create.cy.js' --browser chrome --record --key f3e65b6c-cc36-4439-a011-b998c5093094 --group Chrome --ci-build-id $BUILD_NUMBER --parallel",
+    "cy:spec2": "npm run cy:run -- --spec 'cypress/e2e/spec2/santa-box-create-2.cy.js' --browser electron --record --key f3e65b6c-cc36-4439-a011-b998c5093094 --group Electron --ci-build-id $BUILD_NUMBER --parallel",
     "cy:cloud:parallel": "npm run cy:spec1 & npm run cy:spec2"
   },
   "author": "",
