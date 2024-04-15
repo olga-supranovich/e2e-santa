@@ -1,5 +1,6 @@
 const { defineConfig } = require("cypress");
 const createBundler = require("@bahmutov/cypress-esbuild-preprocessor");
+const { allureCypress } = require("allure-cypress/reporter");
 const {
   addCucumberPreprocessorPlugin,
 } = require("@badeball/cypress-cucumber-preprocessor");
@@ -18,7 +19,9 @@ module.exports = defineConfig({
       });
       on("file:preprocessor", bundler);
       addCucumberPreprocessorPlugin(on, config);
-
+      allureCypress(on, {
+        resultsDir: "./allure-results",
+      });
       return config;
     },
   },

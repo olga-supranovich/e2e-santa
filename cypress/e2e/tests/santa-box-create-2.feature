@@ -1,4 +1,4 @@
-Feature: User can create a box and run it
+Feature: 2 User can create a box and run it
 
 Scenario: User can login and create a box
 Given user logs in as "olga.bogush87@gmail.com" and "olga_su"
