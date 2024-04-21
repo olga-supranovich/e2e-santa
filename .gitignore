@@ -31,3 +31,6 @@ cypress/screenshots
 #allure reports
 allure-report
 allure-results
+
+#jira token
+keys.json

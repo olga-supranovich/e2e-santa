@@ -7,7 +7,9 @@
     "cy:run": "cypress run",
     "clean:allure": "rm -R -f allure-report/* && rm -R -f allure-results/*",
     "generate:report": "allure serve allure-results",
-    "run-tests:allure": "npm run clean:allure && npm run cy:run && npm run generate:report"
+    "run-tests:allure": "npm run clean:allure && npm run cy:run && npm run generate:report",
+    "run:mocha": "cypress run --reporter mocha-junit-reporter",
+    "jira-upload": "export token=$(curl -H \"Content-Type: application/json\" -X POST --data @\"keys.json\" https://xray.cloud.getxray.app/api/v2/authenticate| tr -d '\"') && curl -H \"Content-Type: text/xml\" -X POST -H \"Authorization: Bearer $token\"  --data @\"test-results.xml\" --url \"https://xray.cloud.getxray.app/api/v2/import/execution/junit?projectKey=AUTO\""
   },
   "author": "",
   "license": "ISC",
@@ -21,6 +23,7 @@
     "@bahmutov/cypress-esbuild-preprocessor": "^2.2.0",
     "allure-commandline": "^2.28.0",
     "allure-cypress": "^2.15.1",
-    "esbuild": "^0.20.2"
+    "esbuild": "^0.20.2",
+    "mocha-junit-reporter": "^2.2.1"
   }
 }
